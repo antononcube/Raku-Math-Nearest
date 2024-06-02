@@ -86,19 +86,20 @@ class Math::Nearest::Scan
     #======================================================
     # K-nearest
     #======================================================
-    method k-nearest(@point, UInt $k = 1) {
+    method k-nearest(@point, UInt $k = 1, Bool :$values = True) {
         my @nns = @!points.map({ %( distance => self.distance-function.($_.value, @point), point => $_ ) });
         @nns = @nns.sort(*<distance>);
-        return @nns[^min($k, @nns.elems)];
+        @nns = @nns[^min($k, @nns.elems)];
+        return $values ?? @nns.map(*<point>.value) !! @nns;
     }
 
     #======================================================
     # Nearest within a radius
     #======================================================
-    method nearest-within-ball(@point, Numeric $r) {
+    method nearest-within-ball(@point, Numeric $r, Bool :$values = True) {
         my @nns = @!points.map({ %( distance => self.distance-function.($_.value.Array, @point), point => $_ ) });
         @nns = @nns.grep({ $_<distance> ≤ $r }).sort(*<distance>);
-        return @nns;
+        return $values ?? @nns.map(*<point>.value) !! @nns;
     }
 }
 
