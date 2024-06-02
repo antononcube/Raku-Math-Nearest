@@ -1,0 +1,23 @@
+use v6.d;
+use Test;
+
+use lib <. lib>;
+
+use Math::Nearest;
+
+plan *;
+
+my @points = ([(^100).rand, (^100).rand] xx 100).unique;
+
+## 1
+my @searchPoint1 = |@points.head;
+is-deeply nearest(@points, @searchPoint1).Array, [@searchPoint1,];
+
+## 2
+is-deeply nearest(@points, @searchPoint1, 3), nearest(@points, @searchPoint1, (3, Whatever));
+
+## 3
+is-deeply nearest(@points, @searchPoint1, 5).sort, nearest(@points, @searchPoint1, (5, 60)).sort;
+
+
+done-testing;
