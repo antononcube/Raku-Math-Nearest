@@ -1,0 +1,23 @@
+#!/usr/bin/env raku
+use v6.d;
+
+use lib <. lib>;
+
+use Math::Nearest::Scan;
+
+use Test;
+
+plan *;
+
+## 1
+ok Math::Nearest::Scan.gist;
+
+## 2
+is Math::Nearest::Scan.gist, '(Scan)';
+
+## 3
+my @points = (2.rand xx 30).Array;
+my $obj = Math::Nearest::Scan.new(:@points, distance-function => Whatever);
+is $obj.gist, 'Math::Nearest::Scan(points => 30, distance-function => &euclidean-distance)';
+
+done-testing;

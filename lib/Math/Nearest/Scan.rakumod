@@ -13,7 +13,7 @@ class Math::Nearest::Scan
     #======================================================
     # Creators
     #======================================================
-    submethod BUILD(:@points, :$distance-function = 'euclidean-distance') {
+    submethod BUILD(:@points, :$distance-function = Whatever) {
         @!points = @points;
         given $distance-function {
             when $_.isa(Whatever) || $_.isa(WhateverCode) {
@@ -37,8 +37,10 @@ class Math::Nearest::Scan
         }
 
         # Process points
-        # If an array of arrays make it an array of pars
-        if @!points.all ~~ Positional:D {
+        # If an array of arrays make it an array of pairs
+        if @!points.all !~~ Iterable:D {
+            @!points = @!points.map({[$_, ]}).pairs;
+        } elsif @!points.all ~~ Iterable:D {
             @!points = @!points.pairs;
         } elsif @!points.all ~~ Pair:D {
             @!labels = @!points>>.key;
@@ -48,23 +50,24 @@ class Math::Nearest::Scan
         }
     }
 
-    multi method new(:@points, :$distance-function = 'euclidean-distance') {
+    multi method new(:@points, :$distance-function = Whatever) {
         self.bless(:@points, :$distance-function);
     }
 
-    multi method new(@points, :$distance-function = 'euclidean-distance') {
+    multi method new(@points, :$distance-function = Whatever) {
         self.bless(:@points, :$distance-function);
     }
 
-    multi method new(@points, $distance-function = 'euclidean-distance') {
+    multi method new(@points, $distance-function = Whatever) {
         self.bless(:@points, :$distance-function);
     }
 
     #======================================================
     # Representation
     #======================================================
-    method gist(){
-        return "Math::Nearest::Scan(points => {@!points.elems}, distance-function => {$!distance-function.gist})";
+    multi method gist(::?CLASS:D:-->Str) {
+        my $lblPart = @!labels.elems > 0 ?? ", labels => {@!labels.elems}" !! '';
+        return "Math::Nearest::Scan(points => {@!points.elems}, distance-function => {$!distance-function.gist}" ~ $lblPart ~ ')';
     }
 
     method Str(){
@@ -86,7 +89,13 @@ class Math::Nearest::Scan
     #======================================================
     # K-nearest
     #======================================================
-    method k-nearest(@point, UInt $k = 1, Bool :$values = True) {
+    # The check where * !~~ Iterable:D is most like redundant.
+    multi method k-nearest($point where * !~~ Iterable:D, UInt $k = 1, Bool :v(:$values) = True) {
+        # Should it be checked that @!points.head.elems == 1 ?
+        return self.k-nearest([$point,], $k, :$values);
+    }
+
+    multi method k-nearest(@point, UInt $k = 1, Bool :$values = True) {
         my @nns = @!points.map({ %( distance => self.distance-function.($_.value, @point), point => $_ ) });
         @nns = @nns.sort(*<distance>);
         @nns = @nns[^min($k, @nns.elems)];
@@ -96,7 +105,12 @@ class Math::Nearest::Scan
     #======================================================
     # Nearest within a radius
     #======================================================
-    method nearest-within-ball(@point, Numeric $r, Bool :$values = True) {
+    multi method nearest-within-ball($point where * !~~ Iterable:D, Numeric $r, Bool :v(:$values) = True) {
+        # Should it be checked that @!points.head.elems == 1 ?
+        return self.nearest-within-ball([$point, ], $r, :$values);
+    }
+
+    multi method nearest-within-ball(@point, Numeric $r, Bool :$values = True) {
         my @nns = @!points.map({ %( distance => self.distance-function.($_.value.Array, @point), point => $_ ) });
         @nns = @nns.grep({ $_<distance> ≤ $r }).sort(*<distance>);
         return $values ?? @nns.map(*<point>.value) !! @nns;

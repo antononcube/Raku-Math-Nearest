@@ -29,4 +29,11 @@ is-deeply $finder1.nearest-within-ball(@searchPoint1, $radius3, :values).sort.Ar
 my @nns6 = |@points.sort({ sqrt [+] ($_.Array Z- @searchPoint1).map(* ** 2) });
 is-deeply $finder1.k-nearest(@searchPoint1, 12, :!values).map({ $_<point>.value }), @nns6[^12];
 
+## 5
+my $finder5 = Math::Nearest::Scan.new(points => (3.rand xx 30), distance-function => 'euclidean-distance');
+isa-ok $finder5.k-nearest(2, 2), Iterable;
+
+## 6
+isa-ok $finder5.nearest-within-ball(2, 1), Iterable;
+
 done-testing;
