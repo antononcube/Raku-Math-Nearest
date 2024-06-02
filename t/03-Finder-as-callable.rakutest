@@ -1,0 +1,25 @@
+use v6.d;
+use Test;
+
+use lib <. lib>;
+
+use Math::Nearest;
+
+plan *;
+
+my @points = ([(^100).rand, (^100).rand] xx 100).unique;
+
+## 1
+my $finder1;
+$finder1 = Math::Nearest::Finder.new(@points);
+isa-ok $finder1, Math::Nearest::Finder:D;
+
+## 2
+my @searchPoint1 = |@points.head;
+is-deeply $finder1(@searchPoint1).Array, [@searchPoint1,];
+
+## 2
+is $finder1(@searchPoint1, 12).Array.all ~~ Positional:D, True;
+
+
+done-testing;
