@@ -92,16 +92,16 @@ class Math::Nearest::Finder {
         # Compute
         my @res = do given ($count, $radius) {
             when $_.head.isa(Whatever) && $_.tail.isa(Whatever) {
-                $!finder.k-nearest(@point, 1);
+                $!finder.k-nearest(@point, 1, :!values);
             }
             when ( $_.head ~~ UInt:D && $_.tail.isa(Whatever) ) {
-                $!finder.k-nearest(@point, $count);
+                $!finder.k-nearest(@point, $count, :!values);
             }
             when ( $_.head.isa(Whatever) && $_.tail ~~ Numeric:D ) {
-                $!finder.nearest-within-ball(@point, $radius);
+                $!finder.nearest-within-ball(@point, $radius, :!values);
             }
             when ( $_.head ~~ UInt:D && $_.tail ~~ Numeric:D ) {
-                my @res = $!finder.nearest-within-ball(@point, $radius);
+                my @res = $!finder.nearest-within-ball(@point, $radius, :!values);
                 @res.sort(*<distance>)[^min($count, @res.elems)]
             }
             default {
