@@ -44,9 +44,6 @@ use Math::Nearest;
 use Data::TypeSystem;
 use Text::Plot;
 ```
-```
-# (Any)
-```
 
 ### Set of points
 
@@ -56,9 +53,6 @@ Make a random set of points:
 my @points = ([(^100).rand, (^100).rand] xx 30).unique;
 deduce-type(@points);
 ```
-```
-# Vector(Vector(Atom((Numeric)), 2), 30)
-```
 
 ### Create the K-dimensional tree object
 
@@ -66,9 +60,6 @@ deduce-type(@points);
 my &finder = nearest(@points);
 
 say &finder;
-```
-```
-# Math::Nearest::Finder(Algorithm::KDimensionalTree(points => 30, distance-function => &euclidean-distance))
 ```
 
 ### Nearest k-neighbors
@@ -78,9 +69,6 @@ Use as a search point one from the points set:
 ```perl6
 my @searchPoint = |@points.head;
 ```
-```
-# [82.7997137400612 51.815911977937425]
-```
 
 Find `4` nearest neighbors:
 
@@ -88,41 +76,17 @@ Find `4` nearest neighbors:
 my @res = &finder(@searchPoint, 4);
 .say for @res;
 ```
-```
-# [82.7997137400612 51.815911977937425]
-# [76.74690048700612 45.30314548421236]
-# [93.76468756535048 53.45047592032191]
-# [71.62175684954694 55.56128771507127]
-```
 
 Instead of using the "finder" object as a callable (functor) we can use `nearest`:
 
 ```perl6
 .say for nearest(&finder, @searchPoint, count => 4)
 ```
-```
-# [82.7997137400612 51.815911977937425]
-# [76.74690048700612 45.30314548421236]
-# [93.76468756535048 53.45047592032191]
-# [71.62175684954694 55.56128771507127]
-```
 
 Find nearest neighbors within a ball with radius `30`:
 
 ```perl6
 .say for &finder(@searchPoint, (Whatever, 30))
-```
-```
-# [93.76468756535048 53.45047592032191]
-# [82.7997137400612 51.815911977937425]
-# [68.66354164361587 52.25273427733615]
-# [67.1439347976243 51.678609421192775]
-# [76.74690048700612 45.30314548421236]
-# [71.62175684954694 55.56128771507127]
-# [58.6565707908774 67.61014125155556]
-# [80.23300662613086 80.49154195793962]
-# [82.92996945428985 71.0086509061165]
-# [54.30669960433475 57.177447534448724]
 ```
 
 ### Plot
@@ -139,30 +103,6 @@ x-limit => (0, 100),
 y-limit => (0, 100),
 width => 60,
 height => 20);
-```
-```
-# (data => * nns => ⏺ search => ▲)
-# ++----------+-----------+----------+-----------+----------++       
-# +                                                    *     + 100.00
-# |                                                          |       
-# |      *                                                   |       
-# +*   *                      *    *   *         *           +  80.00
-# |      *                                                   |       
-# |    *                                          *          |       
-# |                                 *                        |       
-# +                               *                          +  60.00
-# |                         *            ** ⏺     ▲     ⏺    |       
-# |                                            ⏺             |       
-# + *                                                        +  40.00
-# |*   *                                                     |       
-# |                                                          |       
-# |                           *                              |       
-# +                                               *          +  20.00
-# |                       *                       *          |       
-# |              *               *                           |       
-# +                                                          +   0.00
-# ++----------+-----------+----------+-----------+----------++       
-#  0.00       20.00       40.00      60.00       80.00      100.00
 ```
 
 -----
