@@ -1,6 +1,7 @@
 use v6.d;
 
 use Algorithm::KDimensionalTree;
+use Math::Nearest::Scan;
 
 class Math::Nearest::Finder {
     has $.finder;
@@ -20,7 +21,7 @@ class Math::Nearest::Finder {
                 $!finder = Algorithm::KDimensionalTree.new(:@points, :$distance-function);
             }
             when $_ ∈ <scan> {
-                $!finder = Math::Nearst::Scan.new(:@points, :$distance-function);
+                $!finder = Math::Nearest::Scan.new(:@points, :$distance-function);
             }
             default {
                 die "Unknown method specification. Known methods are 'KDTree' and 'Scan'.";
@@ -29,16 +30,16 @@ class Math::Nearest::Finder {
         $!method = $method;
     }
 
-    multi method new(:@points, :$distance-function = 'euclidean-distance') {
-        self.bless(:@points, :$distance-function);
+    multi method new(:@points, :$distance-function = 'euclidean-distance', :$method is copy = Whatever) {
+        self.bless(:@points, :$distance-function, :$method);
     }
 
-    multi method new(@points, :$distance-function = 'euclidean-distance') {
-        self.bless(:@points, :$distance-function);
+    multi method new(@points, :$distance-function = 'euclidean-distance', :$method is copy = Whatever) {
+        self.bless(:@points, :$distance-function, :$method);
     }
 
-    multi method new(@points, $distance-function = 'euclidean-distance') {
-        self.bless(:@points, :$distance-function);
+    multi method new(@points, $distance-function = 'euclidean-distance', :$method is copy = Whatever) {
+        self.bless(:@points, :$distance-function, :$method);
     }
 
     #======================================================
@@ -51,7 +52,6 @@ class Math::Nearest::Finder {
     method Str(){
         return self.gist();
     }
-
 
     #======================================================
     # Top-level methods
