@@ -83,7 +83,6 @@ class Math::Nearest::Scan
         @!points.push($new);
     }
 
-
     #======================================================
     # K-nearest
     #======================================================
@@ -98,7 +97,7 @@ class Math::Nearest::Scan
     #======================================================
     method nearest-within-ball(@point, Numeric $r) {
         my @nns = @!points.map({ %( distance => self.distance-function.($_.value.Array, @point), point => $_ ) });
-        @nns = @nns.grep({ $_<distance> ≤ $r });
+        @nns = @nns.grep({ $_<distance> ≤ $r }).sort(*<distance>);
         return @nns;
     }
 }
