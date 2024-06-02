@@ -3,14 +3,14 @@ use v6.d;
 use Algorithm::KDimensionalTree;
 use Math::Nearest::Scan;
 
-class Math::Nearest::Finder {
+class Math::Nearest::Finder does Callable {
     has $.finder;
     has $.method;
 
     #======================================================
     # Creators
     #======================================================
-    submethod BUILD(:@points, :$distance-function = 'euclidean-distance', :$method is copy = Whatever) {
+    submethod BUILD(:@points, :$distance-function = Whatever, :$method is copy = Whatever) {
 
         if $method.isa(Whatever) { $method = 'KDTree'; }
         die "The argument method is expected to be a string or Whatever"
@@ -30,15 +30,15 @@ class Math::Nearest::Finder {
         $!method = $method;
     }
 
-    multi method new(:@points, :$distance-function = 'euclidean-distance', :$method is copy = Whatever) {
+    multi method new(:@points, :$distance-function = Whatever, :$method is copy = Whatever) {
         self.bless(:@points, :$distance-function, :$method);
     }
 
-    multi method new(@points, :$distance-function = 'euclidean-distance', :$method is copy = Whatever) {
+    multi method new(@points, :$distance-function = Whatever, :$method is copy = Whatever) {
         self.bless(:@points, :$distance-function, :$method);
     }
 
-    multi method new(@points, $distance-function = 'euclidean-distance', :$method is copy = Whatever) {
+    multi method new(@points, $distance-function = Whatever, :$method is copy = Whatever) {
         self.bless(:@points, :$distance-function, :$method);
     }
 
