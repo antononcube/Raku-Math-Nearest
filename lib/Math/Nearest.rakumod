@@ -15,6 +15,12 @@ multi sub nearest(@points, :$method = Whatever, :$distance-function = Whatever) 
 }
 
 multi sub nearest(@points,
+                  $search-point where * !~~ Iterable:D,
+                  **@args, *%args) {
+    return nearest(@points, [$search-point,], |@args, |%args);
+}
+
+multi sub nearest(@points,
                   @search-point,
                   UInt $count = 1,
                   :p(:$prop) = Whatever,
@@ -33,6 +39,12 @@ multi sub nearest(@points,
                   :$distance-function = Whatever) {
     my $finder = Math::Nearest::Finder.new(:@points, :$distance-function, :$method);
     return $finder.nearest(@search-point, :$count, :$radius, :$prop, :$keys);
+}
+
+multi sub nearest(Math::Nearest::Finder:D $finder,
+                  $search-point where * !~~ Iterable:D,
+                  **@args, *%args) {
+    return nearest($finder, [$search-point,], |@args, |%args);
 }
 
 multi sub nearest(Math::Nearest::Finder:D $finder,

@@ -63,7 +63,12 @@ class Math::Nearest::Finder does Callable {
     #======================================================
     # Top-level methods
     #======================================================
-    proto method nearest(@point, |) {*}
+    proto method nearest($point, |) {*}
+
+    multi method nearest($point where * !~~ Iterable:D, **@args, *%args) {
+        # Should it be checked that @!points.head.elems == 1 ?
+        return self.nearest([$point,], |@args, |%args);
+    }
 
     multi method nearest(@point, UInt:D $count, :p(:$prop) = Whatever, Bool :$keys = False) {
         return self.nearest(@point, :$count, :$prop, :$keys);

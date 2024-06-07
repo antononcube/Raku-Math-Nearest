@@ -8,6 +8,7 @@ class Math::Nearest::Scan
     has @.points;
     has %.tree;
     has $.distance-function;
+    has $!distance-function-orig;
     has @.labels;
 
     #======================================================
@@ -43,6 +44,14 @@ class Math::Nearest::Scan
         } elsif @!points.all ~~ Pair:D {
             @!labels = @!points>>.key;
             @!points = @!points>>.value.pairs;
+        } elsif @!points.all ~~ Str:D {
+
+            @!points = @!points.map({[$_, ]}).pairs;
+
+            # Assuming we are given a string distance function
+            $!distance-function-orig = $!distance-function;
+            $!distance-function = -> @a, @b { $!distance-function-orig(@a.head, @b.head) };
+
         } elsif @!points.all !~~ Iterable:D {
             @!points = @!points.map({[$_, ]}).pairs;
         } else {
