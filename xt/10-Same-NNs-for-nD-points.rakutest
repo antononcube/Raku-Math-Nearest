@@ -4,18 +4,19 @@ use Test;
 use lib <. lib>;
 use Math::Nearest;
 
-my @points = [rand, rand] xx 100;
+my $dim = 4;
+my @points = (rand xx $dim) xx 100;
 
 my $distance-function = 'euclidean-distance';
 my &nScan = nearest(@points, :$distance-function, method => 'Scan');
 my &nKDTree = nearest(@points, :$distance-function, method => 'KDTree');
 
 ## 1
-my @point1 = rand, rand;
+my @point1 = rand xx $dim;
 is &nKDTree(@point1, 3), &nScan(@point1, 3);
 
 ## 2
-my @point2 = rand, rand;
+my @point2 = rand xx $dim;
 is &nKDTree(@point2, (Whatever, 0.3)).sort, &nScan(@point2, (Whatever, 0.3)).sort;
 
 
