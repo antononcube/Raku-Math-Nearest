@@ -12,13 +12,20 @@ my &nScan = nearest(@words, :$distance-function, method => 'Scan');
 my &nKDTree = nearest(@words, :$distance-function, method => 'KDTree');
 
 ## 1
-my @word1 = @words.head;
-is &nKDTree(@word1, 3), &nScan(@word1, 3);
+# Sometimes passes, sometimes fails.
+my $word1 = @words.head;
+say (:$word1);
+say &nScan($word1, 3, prop => <distance>);
+say &nKDTree($word1, 3, prop => <distance>);
+is &nKDTree($word1, 3, prop => <distance>), &nScan($word1, 3, prop => <distance>);
 
 ## 2
-my @word2 = 'aabk';
-say &nScan(@word2, (Whatever, 3)).sort;
-is &nKDTree(@word2, (Whatever, 3)).sort, &nScan(@word2, (Whatever, 3)).sort;
+# Always fails with Scan retrieving larger set of words.
+my $word2 = 'aabk';
+say (:$word2);
+say &nScan($word2, (Whatever, 3), prop => <point distance>);
+say &nKDTree($word2, (Whatever, 3.1), prop => <point distance>);
+is &nKDTree($word2, (Whatever, 3)).sort, &nScan($word2, (Whatever, 3)).sort;
 
 
 done-testing;
