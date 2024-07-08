@@ -1,0 +1,24 @@
+use v6.d;
+use Test;
+
+use lib <. lib>;
+use Math::Nearest;
+
+my @words = (('a'..'k').pick(4).join xx 30).unique;
+say @words;
+
+my $distance-function = 'hamming-distance';
+my &nScan = nearest(@words, :$distance-function, method => 'Scan');
+my &nKDTree = nearest(@words, :$distance-function, method => 'KDTree');
+
+## 1
+my @word1 = @words.head;
+is &nKDTree(@word1, 3), &nScan(@word1, 3);
+
+## 2
+my @word2 = 'aabk';
+say &nScan(@word2, (Whatever, 3)).sort;
+is &nKDTree(@word2, (Whatever, 3)).sort, &nScan(@word2, (Whatever, 3)).sort;
+
+
+done-testing;
