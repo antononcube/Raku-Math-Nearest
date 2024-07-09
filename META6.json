@@ -1,7 +1,7 @@
 {
   "name": "Math::Nearest",
   "description": "Raku package with algorithms for finding nearest neighbors for different sets of objects.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "authors": [
     "Anton Antonov"
   ],
