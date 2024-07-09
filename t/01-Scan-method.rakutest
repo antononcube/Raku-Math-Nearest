@@ -3,6 +3,7 @@ use Test;
 
 use lib <. lib>;
 
+use Math::Nearest;
 use Math::Nearest::Scan;
 use Math::DistanceFunctions;
 
@@ -35,5 +36,11 @@ isa-ok $finder5.k-nearest(2, 2), Iterable;
 
 ## 6
 isa-ok $finder5.nearest-within-ball(2, 1), Iterable;
+
+## 7
+# The method "Scan" is used for lists of strings it method => Whatever.
+my @words7 = (('a'..'m').pick(4).join xx 20);
+my &finder7 = nearest(@words7, method => Whatever);
+isa-ok &finder7.finder, Math::Nearest::Scan;
 
 done-testing;
