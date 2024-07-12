@@ -114,6 +114,7 @@ multi sub nearest-neighbor-graph(@points,
     my @labeledPoints = do given @points {
         when @points.all ~~ Pair:D { @points }
         when @points.all ~~ Iterable:D { @points.pairs }
+        when @points.all ~~ Str:D { @points.map({ $_ => $_ }) }
         when @points.all !~~ Iterable:D { @points.map({ [$_,] }).pairs }
         default {
             die "The first argument is expected to be an array of pairs, an array of iterables, or an array of non-iterable objects.";
