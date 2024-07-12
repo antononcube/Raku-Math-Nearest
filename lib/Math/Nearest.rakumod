@@ -152,6 +152,10 @@ multi sub nearest-neighbor-graph(@points,
                     ].join;
             $nns-graph
         }
+        when $_ ~~ Str:D && $_.lc ∈ <dataset> {
+            my @res = @graph-edges.map({ %(from => $_.key, to => $_.value) });
+            @res
+        }
         default {
             @graph-edges
         }
