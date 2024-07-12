@@ -43,7 +43,15 @@ class Math::Nearest::Scan
             @!points = @!points.pairs;
         } elsif @!points.all ~~ Pair:D {
             @!labels = @!points>>.key;
-            @!points = @!points>>.value.pairs;
+            @!points = @!points>>.value;
+
+            if @!points.all ~~ Str:D {
+                @!points .= map({ [$_, ]});
+                $!distance-function-orig = $!distance-function;
+                $!distance-function = -> @a, @b { $!distance-function-orig(@a.head, @b.head) };
+            }
+
+            @!points = @!points.pairs;
         } elsif @!points.all ~~ Str:D {
 
             @!points = @!points.map({[$_, ]}).pairs;
