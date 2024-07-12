@@ -13,10 +13,13 @@ class Math::Nearest::Finder does Callable {
     submethod BUILD(:@points, :$distance-function = Whatever, :$method is copy = Whatever) {
 
         if $method.isa(Whatever) {
-            $method = @points.all ~~ Str:D ?? 'Scan' !! 'KDTree';
+            $method = 'KDTree';
+            if @points.all ~~ Str:D || @points.all ~~ Pair:D && @points».value.all ~~ Str:D {
+                $method = 'Scan';
+            }
         }
 
-        die "The argument method is expected to be a string or Whatever"
+        die "The argument method is expected to be a string or Whatever."
         unless $method ~~ Str:D;
 
         given $method.lc {
