@@ -134,7 +134,7 @@ multi sub nearest-neighbor-graph(@points,
 
     # Graph edges
     my @graph-edges =
-            @points.map({
+            @labeledPoints.map({
                 $_.key X=> &finder($_.value, :$count, :$radius, prop => <label>).tail(*-1).flat
             }).flat;
 
