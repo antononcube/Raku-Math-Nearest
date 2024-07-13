@@ -46,7 +46,7 @@ class Math::Nearest::Scan
             @!points = @!points>>.value;
 
             if @!points.all ~~ Str:D {
-                @!points .= map({ [$_, ]});
+                @!points .= map({[$_, ]});
                 $!distance-function-orig = $!distance-function;
                 $!distance-function = -> @a, @b { $!distance-function-orig(@a.head, @b.head) };
             }
