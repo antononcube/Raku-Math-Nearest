@@ -9,6 +9,10 @@ plan *;
 
 my @points = ([(^100).rand, (^100).rand] xx 100).unique;
 
+my @labels = (('a'..'z') X~ ('a'..'z')).pick(@points.elems);
+
+my @labeledPoints = @labels Z=> @points;
+
 ## 1
 my @searchPoint1 = |@points.head;
 is-deeply nearest(@points, @searchPoint1).Array, [@searchPoint1,];
@@ -18,6 +22,17 @@ is-deeply nearest(@points, @searchPoint1, 3), nearest(@points, @searchPoint1, (3
 
 ## 3
 is-deeply nearest(@points, @searchPoint1, 5).sort, nearest(@points, @searchPoint1, (5, 60)).sort;
+
+## 4
+is nearest(@labeledPoints, @searchPoint1, 5, prop => 'label').flat.all ~~ Str:D, True;
+
+## 5
+is nearest(@labeledPoints, @searchPoint1, 5, prop => <index label>).all ~~ Positional:D, True;
+
+## 6
+is-deeply
+        nearest(@labeledPoints, @searchPoint1, 5, prop => 'index').sort,
+        nearest(@points, @searchPoint1, 5, prop => 'index').sort;
 
 
 done-testing;
