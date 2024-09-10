@@ -1,0 +1,48 @@
+use v6.d;
+use Test;
+
+use lib <. lib>;
+
+use Math::Nearest;
+use Math::Nearest::Scan;
+use Math::DistanceFunctions;
+
+plan *;
+
+my @points = (^1000).map({ (^1000).map({1.rand}).cache.Array }).Array;
+my @searchPoint = (^1000).map({1.rand});
+
+## 1
+my $finder1;
+$finder1 = Math::Nearest::Scan.new(@points);
+ok $finder1.k-nearest(@searchPoint, 12, degree => 2);
+
+## 2
+ok $finder1.nearest-within-ball(@searchPoint, 12, degree => 2);
+
+## 3
+is $finder1.k-nearest(@searchPoint, 3, degree => 2, prop => <label>).all ~~ Positional:D, True;
+
+## 4
+my $finder2 = nearest(@points, method => 'Scan');
+ok nearest($finder2, @searchPoint, prop => <label>, degree => 2);
+
+## 5
+my $start = now;
+my @res5a = nearest($finder2, @searchPoint, count => 3, prop => <index distance>, degree => 1);
+my $time5a = now - $start;
+
+$start = now;
+my @res5b = nearest($finder2, @searchPoint, count => 3, prop => <index distance>, degree => 2);
+my $time5b = now - $start;
+
+#note abs(($time5a / $time5b) - 2) / 2;
+is abs(($time5a / $time5b) - 2) / 2 ≤ 0.2, True;
+
+## 6
+#note (:@res5a);
+#note (:@res5b);
+is-deeply @res5a, @res5b;
+
+
+done-testing;
