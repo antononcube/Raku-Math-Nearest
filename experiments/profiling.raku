@@ -1,10 +1,11 @@
 #!/usr/bin/env raku
 use v6.d;
 
-use lib <. lib>;
+#use lib <. lib>;
 
 use Math::Nearest;
-use Math::DistanceFunctions;
+#use Math::DistanceFunctions;
+use Math::DistanceFunctions::Edit;
 
 my @vecs = (^1000).map({ (^1000).map({1.rand}).cache.Array }).Array;
 my @searchVector = (^1000).map({1.rand});
@@ -20,10 +21,13 @@ my $finder-creation-time += now - $start;
 say "&finder.finder.distance-function : ", &finder.finder.distance-function.raku;
 
 
-$start = now;
-my @res = &finder(@searchVector, 12);
-my $nns-finding-time = now - $start;
+my @res = do for 1..6 -> $degree {
+    $start = now;
+    &finder(@searchVector, 12, :$degree);
+    %( :$degree, time => now - $start);
+}
 
 say "All distances time   : {$scan-vectors-time}s";
 say "Finder creation time : {$finder-creation-time}s";
-say "NNs finding time     : {$nns-finding-time}s";
+say "NNs finding time     :";
+.say for @res;
