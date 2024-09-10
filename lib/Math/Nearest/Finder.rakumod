@@ -76,19 +76,38 @@ class Math::Nearest::Finder does Callable {
         return self.nearest([$point,], |@args, |%args);
     }
 
-    multi method nearest(@point, UInt:D $count, :p(:$prop) = Whatever, Bool :$keys = False) {
-        return self.nearest(@point, :$count, :$prop, :$keys);
+    multi method nearest(@point, UInt:D $count,
+                         :p(:$prop) = Whatever,
+                         Bool :$keys = False,
+                         UInt:D :$degree = 1,
+                         :$batch = Whatever) {
+        return self.nearest(@point, :$count, :$prop, :$keys, :$degree, :$batch);
     }
 
-    multi method nearest(@point, Whatever, :p(:$prop) = Whatever, Bool :$keys = False) {
-        return self.nearest(@point, count => 1, :$prop, :$keys);
+    multi method nearest(@point, Whatever,
+                         :p(:$prop) = Whatever,
+                         Bool :$keys = False,
+                         UInt:D :$degree = 1,
+                         :$batch = Whatever) {
+        return self.nearest(@point, count => 1, :$prop, :$keys, :$degree, :$batch);
     }
 
-    multi method nearest(@point, ($count, $radius), :p(:$prop) = Whatever, Bool :$keys = False) {
-        return self.nearest(@point, :$count, :$radius, :$prop, :$keys);
+    multi method nearest(@point, ($count, $radius),
+                         :p(:$prop) = Whatever,
+                         Bool :$keys = False,
+                         UInt:D :$degree = 1,
+                         :$batch = Whatever) {
+        return self.nearest(@point, :$count, :$radius, :$prop, :$keys, :$degree, :$batch);
     }
 
-    multi method nearest(@point, :c(:$count) = Whatever, :r(:$radius) = Whatever, :p(:$prop) is copy = Whatever, Bool :$keys is copy = False) {
+    multi method nearest(@point,
+                         :c(:$count) = Whatever,
+                         :r(:$radius) = Whatever,
+                         :p(:$prop) is copy = Whatever,
+                         Bool :$keys is copy = False,
+                         UInt:D :$degree = 1,
+                         :$batch = Whatever
+                         ) {
 
         # Process properties
         my @knownProperties = <distance index label point>;
@@ -100,19 +119,27 @@ class Math::Nearest::Finder does Callable {
         die "The value of the argument property is expected to be Whatever or one of '{@knownProperties.join(',')}'."
         unless $prop ~~ Iterable:D && $prop.all ~~ Str:D && ($prop (-) @knownProperties).elems == 0;
 
+        # Not all finders have :$degree and :$batch in their signatures
+        my %args = %();
+        my $method = $!finder.^find_method('k-nearest');
+        my @knownParamNames = $method.candidates.map({ $_.signature.params.map({ $_.usage-name }) }).flat.unique;
+        if 'degree' ∈ @knownParamNames {
+            %args = :$degree, :$batch
+        }
+
         # Compute
         my @res = do given ($count, $radius) {
             when $_.head.isa(Whatever) && $_.tail.isa(Whatever) {
-                $!finder.k-nearest(@point, 1, :!values);
+                $!finder.k-nearest(@point, 1, :!values, |%args);
             }
             when ( $_.head ~~ UInt:D && $_.tail.isa(Whatever) ) {
-                $!finder.k-nearest(@point, $count, :!values);
+                $!finder.k-nearest(@point, $count, :!values, |%args);
             }
             when ( $_.head.isa(Whatever) && $_.tail ~~ Numeric:D ) {
-                $!finder.nearest-within-ball(@point, $radius, :!values);
+                $!finder.nearest-within-ball(@point, $radius, :!values, |%args);
             }
             when ( $_.head ~~ UInt:D && $_.tail ~~ Numeric:D ) {
-                my @res = $!finder.nearest-within-ball(@point, $radius, :!values);
+                my @res = $!finder.nearest-within-ball(@point, $radius, :!values, |%args);
                 @res.sort(*<distance>)[^min($count, @res.elems)]
             }
             default {
