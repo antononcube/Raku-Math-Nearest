@@ -2,6 +2,7 @@ use v6.d;
 
 use Algorithm::KDimensionalTree;
 use Math::Nearest::Scan;
+use NativeCall;
 
 class Math::Nearest::Finder does Callable {
     has $.finder;
@@ -71,7 +72,7 @@ class Math::Nearest::Finder does Callable {
     #======================================================
     proto method nearest($point, |) {*}
 
-    multi method nearest($point where * !~~ Iterable:D, **@args, *%args) {
+    multi method nearest($point where $point !~~ (Iterable:D | CArray:D), **@args, *%args) {
         # Should it be checked that @!points.head.elems == 1 ?
         return self.nearest([$point,], |@args, |%args);
     }

@@ -5,6 +5,7 @@ unit module Math::Nearest;
 use Algorithm::KDimensionalTree;
 use Math::Nearest::Scan;
 use Math::Nearest::Finder;
+use NativeCall;
 
 #----------------------------------------------------------
 # Find nearest elements.
@@ -15,7 +16,7 @@ multi sub nearest(@points, :$method = Whatever, :$distance-function = Whatever) 
 }
 
 multi sub nearest(@points,
-                  $search-point where * !~~ Iterable:D,
+                  $search-point where * !~~ (Iterable:D | CArray:D),
                   **@args, *%args) {
     return nearest(@points, [$search-point,], |@args, |%args);
 }
@@ -45,7 +46,7 @@ multi sub nearest(@points,
 }
 
 multi sub nearest(Math::Nearest::Finder:D $finder,
-                  $search-point where * !~~ Iterable:D,
+                  $search-point where $search-point !~~ (Iterable:D | CArray:D),
                   **@args, *%args) {
     return nearest($finder, [$search-point,], |@args, |%args);
 }
@@ -116,9 +117,9 @@ multi sub nearest-neighbor-graph(@points,
     # This is done regardless in the finders, but we might issue additional messages here.
     my @labeledPoints = do given @points {
         when @points.all ~~ Pair:D { @points }
-        when @points.all ~~ Iterable:D { @points.pairs }
+        when @points.all ~~ (Iterable:D | CArray:D) { @points.pairs }
         when @points.all ~~ Str:D { @points.map({ $_ => $_ }) }
-        when @points.all !~~ Iterable:D { @points.map({ [$_,] }).pairs }
+        when @points.all !~~ (Iterable:D | CArray:D) { @points.map({ [$_,] }).pairs }
         default {
             die "The first argument is expected to be an array of pairs, an array of iterables, or an array of non-iterable objects.";
         }
