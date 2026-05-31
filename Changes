@@ -1,0 +1,6 @@
+Changes of the Raku package "Math::Nearest".
+
+2026-05-30 0.0.7
+    - Allowing CArray elements to be seen as multidimensional points.
+        - Hence, via "Math::DistanceFunctions::Native", native call implementations are used.
+        - Only for (Squared) Euclidean distance, Cosine distance, and Dot product.
