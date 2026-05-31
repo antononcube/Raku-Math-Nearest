@@ -1,35 +1,33 @@
 {
-  "name": "Math::Nearest",
-  "description": "Raku package with algorithms for finding nearest neighbors for different sets of objects.",
-  "version": "0.0.6",
-  "authors": [
-    "Anton Antonov"
-  ],
-  "auth": "zef:antononcube",
-  "depends": [
-    "Math::DistanceFunctions:ver<0.1.1+>",
-    "Algorithm::KDimensionalTree:ver<0.1.1+>:api<1>"
-  ],
-  "build-depends": [],
-  "test-depends": [],
-  "provides": {
-    "Math::Nearest": "lib/Math/Nearest.rakumod",
-    "Math::Nearest::Finder": "lib/Math/Nearest/Finder.rakumod",
-    "Math::Nearest::Scan": "lib/Math/Nearest/Scan.rakumod"
-  },
-  "resources": [
-  ],
-  "license": "Artistic-2.0",
-  "tags": [
-    "k-d tree",
-    "k-dimensional tree",
-    "scan",
-    "scanning",
-    "spatial search",
-    "nearest",
-    "nearest neighbors"
-  ],
-  "api": "0",
-  "source-url": "https://github.com/antononcube/Raku-Math-Nearest.git",
-  "raku": "6.d"
+    "name": "Math::Nearest",
+    "description": "Raku package with algorithms for finding nearest neighbors for different sets of objects.",
+    "version": "0.0.7",
+    "raku": "6.d",
+    "authors": [
+        "Anton Antonov"
+    ],
+    "auth": "zef:antononcube",
+    "depends": [
+        "Math::DistanceFunctions:ver<0.1.4+>",
+        "Math::DistanceFunctions::Native:ver<0.1.1+>",
+        "Algorithm::KDimensionalTree:ver<0.1.2+>:api<1>"
+    ],
+    "build-depends": [],
+    "provides": {
+        "Math::Nearest": "lib/Math/Nearest.rakumod",
+        "Math::Nearest::Finder": "lib/Math/Nearest/Finder.rakumod",
+        "Math::Nearest::Scan": "lib/Math/Nearest/Scan.rakumod"
+    },
+    "license": "Artistic-2.0",
+    "tags": [
+        "k-d tree",
+        "k-dimensional tree",
+        "scan",
+        "scanning",
+        "spatial search",
+        "nearest",
+        "nearest neighbors"
+    ],
+    "api": "0",
+    "source-url": "https://github.com/antononcube/Raku-Math-Nearest.git"
 }
